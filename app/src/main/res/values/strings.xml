@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">The Battle of Universities</string>
+    <string name="succes_message">Success</string>
+    <string name="error_message">Error</string>
 </resources>

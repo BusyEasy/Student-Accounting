@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +26,7 @@ import com.example.thebattleofuniversities.DbHelper.DbWar;
 
 public class CatalogActivity extends AppCompatActivity{
 
-    DbWar dbwar;
+
 
 
     @Override
@@ -42,7 +45,6 @@ public class CatalogActivity extends AppCompatActivity{
             }
         });
 
-        dbwar = new DbWar(this);
     }
     @Override
     protected void onStart() {
@@ -51,8 +53,6 @@ public class CatalogActivity extends AppCompatActivity{
     }
 
     private void displatBaseInfo() {
-
-        SQLiteDatabase database = dbwar.getReadableDatabase();
         String projection[] = {Contract.UniversityEntry._ID,
                 Contract.UniversityEntry.COLUMN_LASTNAME,
                 Contract.UniversityEntry.COLUMN_NAME,
@@ -60,8 +60,10 @@ public class CatalogActivity extends AppCompatActivity{
                 Contract.UniversityEntry.COLUMN_NICKNAME,
                 Contract.UniversityEntry.COLUMN_UNIVERSITY
         };
-        Cursor cursor = database.query(Contract.UniversityEntry.TABLE_NAME, projection, null, null, null, null, null);
-        TextView textView = (TextView)findViewById(R.id.testText);
+       // Cursor cursor = database.query(Contract.UniversityEntry.TABLE_NAME, projection, null, null, null, null, null);
+
+        Cursor cursor = getContentResolver().query(Contract.UniversityEntry.CONTENT_URI, projection, null, null, null);
+        TextView textView = (TextView)findViewById(R.id.nameStudent);
 
         try{
 
@@ -97,7 +99,6 @@ public class CatalogActivity extends AppCompatActivity{
     }
 
     private void insertData(){
-        SQLiteDatabase database = dbwar.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.UniversityEntry.COLUMN_NAME, "Olzhas");
@@ -106,7 +107,17 @@ public class CatalogActivity extends AppCompatActivity{
         contentValues.put(Contract.UniversityEntry.COLUMN_UNIVERSITY, "Eurasia Internation University");
         contentValues.put(Contract.UniversityEntry.COLUMN_GENGER, Contract.UniversityEntry.Gender_Man);
 
-       long newRowId = database.insert(Contract.UniversityEntry.TABLE_NAME, null, contentValues);
+        Uri newUri = getContentResolver().insert(Contract.UniversityEntry.CONTENT_URI, contentValues);
+
+        if(newUri==null){
+            Toast.makeText(this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, getString(R.string.succes_message), Toast.LENGTH_SHORT).show();
+        }
+
+
+
 
 
     }
@@ -130,8 +141,6 @@ public class CatalogActivity extends AppCompatActivity{
                 insertData();
                 displatBaseInfo();
                 break;
-
-
         }
 
         return true;

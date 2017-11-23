@@ -3,6 +3,7 @@ package com.example.thebattleofuniversities;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
    Spinner spinnerUniversity, spinnerGender;
    int mGender;
    String universityName;
-    DbWar databaseConnect;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         spinnerUniversity = (Spinner)findViewById(R.id.spinnerUniversity);
         spinnerGender = (Spinner)findViewById(R.id.spinnerGender);
-
-        databaseConnect = new DbWar(this);
 
         final String []gender = {"Мужской", "Женский"};
 
@@ -125,15 +122,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void insertStudent(){
 
-        String name = EditName.getText().toString();
-        String lastName = LasnNameEdit.getText().toString();
-        String nickName = NickEdit.getText().toString();
-
-
-        SQLiteDatabase sqldb = databaseConnect.getWritableDatabase();
+        String name = EditName.getText().toString().trim();
+        String lastName = LasnNameEdit.getText().toString().trim();
+        String nickName = NickEdit.getText().toString().trim();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.UniversityEntry.COLUMN_NAME, name);
@@ -143,16 +136,13 @@ public class MainActivity extends AppCompatActivity {
         contentValues.put(Contract.UniversityEntry.COLUMN_GENGER, mGender);
 
 
-        long addStudentdb = sqldb.insert(Contract.UniversityEntry.TABLE_NAME, null, contentValues);
-
-        if(addStudentdb==-1){
-            Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
-
+       Uri newUri = getContentResolver().insert(Contract.UniversityEntry.CONTENT_URI, contentValues);
+        if(newUri==null){
+            Toast.makeText(this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(MainActivity.this, "Successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.succes_message), Toast.LENGTH_SHORT).show();
         }
-
 
     }
 

@@ -21,6 +21,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CatalogActivity"/>
             ></activity>
-    </application>
 
+        <provider
+            android:authorities="com.example.thebattleofuniversities"
+            android:name=".Provider.StudetProvider"
+            android:exported="false"/>
+    </application>
 </manifest>

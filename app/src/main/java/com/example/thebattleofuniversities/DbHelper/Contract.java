@@ -1,5 +1,6 @@
 package com.example.thebattleofuniversities.DbHelper;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -7,6 +8,10 @@ import android.provider.BaseColumns;
  */
 
 public final class Contract {
+
+    public static final String CONTENT_AUTHORITY = "com.example.thebattleofuniversities";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_STUDENT = "Student";
 
     public static class UniversityEntry implements BaseColumns{
 
@@ -22,6 +27,9 @@ public final class Contract {
 
         public static final int Gender_Man = 1;
         public static final int Gender_Girl = 2;
+
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_STUDENT);
 
 
 
