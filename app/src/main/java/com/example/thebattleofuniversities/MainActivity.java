@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 insertStudent();
+                //updateStudent();
                 finish();
             }
         });
@@ -146,4 +147,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+   /* private void updateStudent(){
+
+        String selection = Contract.UniversityEntry.COLUMN_NAME + "=?";
+        String selectionArgs[] = {Contract.UniversityEntry.COLUMN_NAME + "Aidos"};
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Contract.UniversityEntry.COLUMN_NAME, "ABUBAKAR");
+
+        int uriUpdate = getContentResolver().update(Contract.UniversityEntry.CONTENT_URI, contentValues, selection, selectionArgs);
+
+        Toast.makeText(this, uriUpdate, Toast.LENGTH_SHORT).show();
+
+
+
+    }
+*/
 }

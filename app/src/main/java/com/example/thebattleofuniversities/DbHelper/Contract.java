@@ -1,5 +1,6 @@
 package com.example.thebattleofuniversities.DbHelper;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -30,6 +31,11 @@ public final class Contract {
 
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_STUDENT);
+
+        public static final  String CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
+                CONTENT_AUTHORITY + "/" + PATH_STUDENT;
+        public static final String CONTENT_LIST_ITEM = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/"+
+                CONTENT_AUTHORITY + "/" + PATH_STUDENT;
 
 
 

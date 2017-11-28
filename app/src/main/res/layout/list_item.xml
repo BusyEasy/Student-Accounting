@@ -1,8 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/list_item"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     >
 
-</ListView>
+    <TextView
+        android:id="@+id/NickNameAdapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginLeft="8dp"
+        android:textColor="@color/colorName"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/StudentNameAdapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:textColor="@color/colorName"
+        android:paddingTop="3dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/StudentLastNameAdapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:textColor="@color/colorName"
+        android:paddingTop="3dp"
+        android:text="TextView" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="-45dp"
+        >
+        <TextView
+            android:id="@+id/UniversityAdapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/colorAccent"
+            android:text="TextView"
+            android:textSize="18dp"
+            />
+
+    </LinearLayout>
+</LinearLayout>
+
+
+
+
+</LinearLayout>

@@ -81,7 +81,26 @@ public class StudetProvider extends ContentProvider{
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+
+        final int match = sUriMathcer.match(uri);
+
+        switch (match){
+
+            case STUDENT:
+                return Contract.UniversityEntry.CONTENT_LIST_TYPE;
+            case STUDENT_ID:
+                return Contract.UniversityEntry.CONTENT_LIST_ITEM;
+
+
+            default:
+                throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
+
+        }
+
+
+
+
+
     }
 
     @Nullable
@@ -131,11 +150,99 @@ public class StudetProvider extends ContentProvider{
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        SQLiteDatabase sqLiteDatabase = dbWar.getWritableDatabase();
+
+        int match = sUriMathcer.match(uri);
+        switch (match){
+
+            case STUDENT:
+
+                return sqLiteDatabase.delete(Contract.UniversityEntry.TABLE_NAME, selection, selectionArgs);
+
+            case STUDENT_ID:
+
+                selection = Contract.UniversityEntry._ID  + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+
+                return sqLiteDatabase.delete(Contract.UniversityEntry.TABLE_NAME, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Delete Student error, problem uri" + uri);
+
+        }
+
+
+
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        int match = sUriMathcer.match(uri);
+
+        switch (match){
+
+            case STUDENT:
+
+                return updateStudent(uri, values, selection, selectionArgs);
+
+            case STUDENT_ID:
+
+                selection = Contract.UniversityEntry._ID+ "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+
+                return updateStudent(uri,  values, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+
+
+        }
+
+
     }
+
+    private int updateStudent(Uri uri, ContentValues values, String selection, String [] selectionArgs){
+
+     SQLiteDatabase database = dbWar.getWritableDatabase();
+
+        if(values.containsKey(Contract.UniversityEntry.COLUMN_NAME)){
+
+            String name = values.getAsString(Contract.UniversityEntry.COLUMN_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Stuednt requires a name");
+            }
+
+        }
+
+        if(values.containsKey(Contract.UniversityEntry.COLUMN_NICKNAME)){
+
+            String lastName = values.getAsString(Contract.UniversityEntry.COLUMN_NICKNAME);
+
+            if(lastName==null){
+                throw new IllegalArgumentException("Stuednt requires a Nickname");
+            }
+
+        }
+
+        if(values.containsKey(Contract.UniversityEntry.COLUMN_UNIVERSITY)){
+
+            String universityName = values.getAsString(Contract.UniversityEntry.COLUMN_UNIVERSITY);
+
+            if(universityName==null){
+                throw new IllegalArgumentException("Stuednt requires a UniversityName");
+            }
+
+        }
+
+        if (values.size() == 0) {
+            return 0;
+        }
+
+
+
+
+        return database.update(Contract.UniversityEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+
 }
