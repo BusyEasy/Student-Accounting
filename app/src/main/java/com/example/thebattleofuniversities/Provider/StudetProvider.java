@@ -1,5 +1,6 @@
 package com.example.thebattleofuniversities.Provider;
 
+import android.app.Notification;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -73,8 +74,7 @@ public class StudetProvider extends ContentProvider{
                 throw new IllegalArgumentException("НАРМАЛЬНА ДЕЛАЙ ЗАПРАС " +uri);
         }
 
-
-
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -96,10 +96,6 @@ public class StudetProvider extends ContentProvider{
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
 
         }
-
-
-
-
 
     }
 
@@ -124,7 +120,7 @@ public class StudetProvider extends ContentProvider{
     private Uri insertStudent(Uri uri, ContentValues contentValues){
 
         SQLiteDatabase database = dbWar.getWritableDatabase();
-        long insertPeople = database.insert(Contract.UniversityEntry.TABLE_NAME, null, contentValues);
+
 
         String name = contentValues.getAsString(Contract.UniversityEntry.COLUMN_NAME);
         String lastName = contentValues.getAsString(Contract.UniversityEntry.COLUMN_LASTNAME);
@@ -143,9 +139,11 @@ public class StudetProvider extends ContentProvider{
         else if(gender==0){
             throw new IllegalArgumentException("Student requires a gender");
         }
+        long insertPeople = database.insert(Contract.UniversityEntry.TABLE_NAME, null, contentValues);
 
+        getContext().getContentResolver().notifyChange(uri, null);
 
-        return Uri.withAppendedPath(uri, Contract.UniversityEntry._ID);
+        return Uri.withAppendedPath(uri, String.valueOf(insertPeople));
     }
 
     @Override
@@ -154,24 +152,31 @@ public class StudetProvider extends ContentProvider{
         SQLiteDatabase sqLiteDatabase = dbWar.getWritableDatabase();
 
         int match = sUriMathcer.match(uri);
+        int deleteRows;
         switch (match){
 
             case STUDENT:
 
-                return sqLiteDatabase.delete(Contract.UniversityEntry.TABLE_NAME, selection, selectionArgs);
+                deleteRows = sqLiteDatabase.delete(Contract.UniversityEntry.TABLE_NAME, selection, selectionArgs);
+             break;
 
             case STUDENT_ID:
 
                 selection = Contract.UniversityEntry._ID  + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
-                return sqLiteDatabase.delete(Contract.UniversityEntry.TABLE_NAME, selection, selectionArgs);
+                deleteRows = sqLiteDatabase.delete(Contract.UniversityEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Delete Student error, problem uri" + uri);
 
         }
 
+        if(deleteRows!=0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
 
+        return  deleteRows;
 
     }
 
@@ -239,9 +244,11 @@ public class StudetProvider extends ContentProvider{
         }
 
 
-
-
-        return database.update(Contract.UniversityEntry.TABLE_NAME, values, selection, selectionArgs);
+        int updateRows = database.update(Contract.UniversityEntry.TABLE_NAME, values, selection, selectionArgs);
+        if(updateRows!=0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return updateRows;
     }
 
 

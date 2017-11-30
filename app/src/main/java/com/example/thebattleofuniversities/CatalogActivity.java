@@ -1,5 +1,6 @@
 package com.example.thebattleofuniversities;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -34,10 +36,13 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     public static final int STUDENT_LOADER = 1;
     AdapterStudent adapterStudent;
     Cursor cursor;
+    Intent intent;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.catalogactive);
+
+        setTitle("The War a Student");
 
         FloatingActionButton  floatingActionButton = (FloatingActionButton)findViewById(R.id.floatingActionButton);
 
@@ -50,7 +55,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-
         adapterStudent  = new AdapterStudent(this, cursor);
         ListView listView = (ListView)findViewById(R.id.listView);
         View emptyView = findViewById(R.id.empty_view);
@@ -58,53 +62,27 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         listView.setAdapter(adapterStudent);
 
+
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+               intent = new Intent(CatalogActivity.this, MainActivity.class);
+               Uri uri = ContentUris.withAppendedId(Contract.UniversityEntry.CONTENT_URI, id);
+
+                intent.setData(uri);
+
+                startActivity(intent);
+
+            }
+        });
+
+
         getLoaderManager().initLoader(STUDENT_LOADER, null, this);
     }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //displatBaseInfo();
-    }
 
-/*
-
-    private void displatBaseInfo() {
-
-
-
-
-        //TextView textView = (TextView)findViewById(R.id.nameStudent);
-
-
-        try{
-
-            int idColumnIndex = cursor.getColumnIndex(Contract.UniversityEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(Contract.UniversityEntry.COLUMN_NAME);
-            int lastNameColumnIndex = cursor.getColumnIndex(Contract.UniversityEntry.COLUMN_LASTNAME);
-            int nickNameColumnIndex = cursor.getColumnIndex(Contract.UniversityEntry.COLUMN_NICKNAME);
-            int genderColumnIndex = cursor.getColumnIndex(Contract.UniversityEntry.COLUMN_GENGER);
-            int universityColumnIndex = cursor.getColumnIndex(Contract.UniversityEntry.COLUMN_UNIVERSITY);
-
-
-
-            while (cursor.moveToNext()){
-
-                int id = cursor.getInt(idColumnIndex);
-                String name = cursor.getString(nameColumnIndex);
-                String  lastName = cursor.getString(lastNameColumnIndex);
-                String nickName = cursor.getString(nickNameColumnIndex);
-                int gender = cursor.getInt(genderColumnIndex);
-                String  university = cursor.getString(universityColumnIndex);
-            }
-
-        }
-        finally {
-
-
-        }
-
-
-    }*/
 
     private void insertData(){
 
@@ -124,18 +102,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             Toast.makeText(this, getString(R.string.succes_message), Toast.LENGTH_SHORT).show();
         }
 
-
-
-
-
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        cursor.close();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.catalogmenu, menu);
@@ -153,7 +120,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 break;
             case R.id.add:
                 insertData();
-                //displatBaseInfo();
                 break;
         }
 
@@ -175,6 +141,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
         adapterStudent.swapCursor(data);
+
     }
 
     @Override

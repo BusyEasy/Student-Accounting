@@ -2,8 +2,11 @@ package com.example.thebattleofuniversities;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.net.Uri;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,19 +16,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.thebattleofuniversities.DbHelper.Contract;
-import com.example.thebattleofuniversities.DbHelper.DbWar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>
+ {
 
-   EditText EditName, LasnNameEdit, NickEdit;
+   EditText EditName, LastNameEdit, NickEdit;
    Button battle;
    Spinner spinnerUniversity, spinnerGender;
-   int mGender;
+   String mGender;
    String universityName;
+   Uri  uriIntent;
+    public static final int EDITOR_LOADER = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         EditName = (EditText)findViewById(R.id.EditName);
-        LasnNameEdit = (EditText)findViewById(R.id.LasnNameEdit);
+        LastNameEdit = (EditText)findViewById(R.id.LasnNameEdit);
         NickEdit = (EditText)findViewById(R.id.NickEdit);
 
         battle = (Button)findViewById(R.id.battle);
@@ -42,7 +46,18 @@ public class MainActivity extends AppCompatActivity {
         spinnerUniversity = (Spinner)findViewById(R.id.spinnerUniversity);
         spinnerGender = (Spinner)findViewById(R.id.spinnerGender);
 
-        final String []gender = {"Мужской", "Женский"};
+        Intent intent = getIntent();
+
+         uriIntent = intent.getData();
+
+        if(uriIntent==null){
+            setTitle("Add a Student");
+        }
+        else {
+            setTitle("Edit a Student");
+            getLoaderManager().initLoader(EDITOR_LOADER, null, this);
+        }
+       final String []gender = {"Мужской", "Женский"};
 
         String []universityList = {"Евразийский Национальный университет", "Казгу", "Таргу", "Назарбаев университет"};
 
@@ -63,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
                 switch (genderchoose){
 
                     case "Мужской":
-                        mGender = Contract.UniversityEntry.Gender_Man;
+                        mGender = String.valueOf(Contract.UniversityEntry.Gender_Man);
                         break;
                     case "Женский":
-                        mGender = Contract.UniversityEntry.Gender_Girl;
+                        mGender = String.valueOf(Contract.UniversityEntry.Gender_Girl);
                             break;
                     default:
                         break;
@@ -117,50 +132,118 @@ public class MainActivity extends AppCompatActivity {
         battle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertStudent();
-                //updateStudent();
+                saveStudent();
                 finish();
             }
         });
-    }
-    private void insertStudent(){
 
-        String name = EditName.getText().toString().trim();
-        String lastName = LasnNameEdit.getText().toString().trim();
+
+
+    }
+    private void saveStudent(){
+
+        ContentValues contentValues = new ContentValues();
+
         String nickName = NickEdit.getText().toString().trim();
+        String name = EditName.getText().toString().trim();
+        String lastName = LastNameEdit.toString().trim();
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Contract.UniversityEntry.COLUMN_NAME, name);
-        contentValues.put(Contract.UniversityEntry.COLUMN_LASTNAME, lastName);
-        contentValues.put(Contract.UniversityEntry.COLUMN_NICKNAME, nickName);
-        contentValues.put(Contract.UniversityEntry.COLUMN_UNIVERSITY, universityName);
-        contentValues.put(Contract.UniversityEntry.COLUMN_GENGER, mGender);
+        if(TextUtils.isEmpty(name)){
 
-
-       Uri newUri = getContentResolver().insert(Contract.UniversityEntry.CONTENT_URI, contentValues);
-        if(newUri==null){
-            Toast.makeText(this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
+            return;
         }
+        else if(TextUtils.isEmpty(nickName)){
+            return;
+        }
+        else if(TextUtils.isEmpty(lastName)){
+            return;
+        }
+        else if(TextUtils.isEmpty(universityName)){
+            return;
+        }
+        else if(TextUtils.isEmpty(mGender)){
+            return;
+        }
+
         else {
-            Toast.makeText(this, getString(R.string.succes_message), Toast.LENGTH_SHORT).show();
+            contentValues.put(Contract.UniversityEntry.COLUMN_NICKNAME, nickName);
+            contentValues.put(Contract.UniversityEntry.COLUMN_NAME, name);
+            contentValues.put(Contract.UniversityEntry.COLUMN_GENGER, mGender);
+            contentValues.put(Contract.UniversityEntry.COLUMN_UNIVERSITY, universityName);
+            contentValues.put(Contract.UniversityEntry.COLUMN_LASTNAME, lastName);
+
+            if (uriIntent == null) {
+
+                Uri uri = getContentResolver().insert(Contract.UniversityEntry.CONTENT_URI, contentValues);
+
+                if (uri == null) {
+                    Toast.makeText(this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(this, getString(R.string.succes_message), Toast.LENGTH_SHORT).show();
+
+                }
+            } else {
+
+                int updateLoader = getContentResolver().update(uriIntent, contentValues, null, null);
+
+                if (updateLoader == 0) {
+                    Toast.makeText(this, getString(R.string.error_message), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getString(R.string.succes_message), Toast.LENGTH_SHORT).show();
+                }
+
+            }
         }
 
     }
 
-   /* private void updateStudent(){
 
-        String selection = Contract.UniversityEntry.COLUMN_NAME + "=?";
-        String selectionArgs[] = {Contract.UniversityEntry.COLUMN_NAME + "Aidos"};
+     @Override
+     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Contract.UniversityEntry.COLUMN_NAME, "ABUBAKAR");
-
-        int uriUpdate = getContentResolver().update(Contract.UniversityEntry.CONTENT_URI, contentValues, selection, selectionArgs);
-
-        Toast.makeText(this, uriUpdate, Toast.LENGTH_SHORT).show();
+         String projection [] = {Contract.UniversityEntry._ID, Contract.UniversityEntry.COLUMN_NAME,
+                                 Contract.UniversityEntry.COLUMN_NICKNAME, Contract.UniversityEntry.COLUMN_LASTNAME,
+                                 Contract.UniversityEntry.COLUMN_UNIVERSITY
+         };
 
 
+         return new CursorLoader(getApplicationContext(), uriIntent, projection, null, null,null);
+     }
 
-    }
-*/
-}
+     @Override
+     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+         if(data.moveToFirst()){
+
+             int columnNameIndex = data.getColumnIndex(Contract.UniversityEntry.COLUMN_NAME);
+             int columnNickName = data.getColumnIndex(Contract.UniversityEntry.COLUMN_NICKNAME);
+             int columnLastName = data.getColumnIndex(Contract.UniversityEntry.COLUMN_LASTNAME);
+             int columnUniversityName = data.getColumnIndex(Contract.UniversityEntry.COLUMN_UNIVERSITY);
+
+             String name = data.getString(columnNameIndex);
+             String lastName = data.getString(columnLastName);
+             String nickName = data.getString(columnNickName);
+             String university = data.getString(columnUniversityName);
+
+             EditName.setText(name);
+             LastNameEdit.setText(lastName);
+             NickEdit.setText(nickName);
+
+
+
+         }
+
+
+     }
+
+     @Override
+     public void onLoaderReset(Loader<Cursor> loader) {
+
+        EditName.setText("");
+        NickEdit.setText("");
+        LastNameEdit.setText("");
+
+
+     }
+ }
