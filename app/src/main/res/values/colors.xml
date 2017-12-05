@@ -8,6 +8,8 @@
     <color name="colorBackgroundMain">#ffffff</color>
     <color name="colorName"> #6666ff</color>
     <color name="colorButton">#33ff77</color>
+    <color name="colorSplash">#ff884d</color>
+    <color name="colorlogo">#000000</color>
 
 
 </resources>

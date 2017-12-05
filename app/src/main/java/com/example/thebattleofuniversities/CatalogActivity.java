@@ -115,11 +115,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         int id = item.getItemId();
 
         switch (id){
-
-            case R.id.delete:
-                break;
             case R.id.add:
                 insertData();
+                break;
+            case R.id.deleteAllStudent:
+                deleteAllStudent();
                 break;
         }
 
@@ -150,4 +150,21 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         adapterStudent.swapCursor(null);
 
     }
+
+    private void deleteAllStudent(){
+
+        int deleteAll = getContentResolver().delete(Contract.UniversityEntry.CONTENT_URI, null, null);
+
+        if(deleteAll==0){
+
+            Toast.makeText(getApplicationContext(), (R.string.error_message), Toast.LENGTH_SHORT).show();
+
+
+        }
+        else {
+            Toast.makeText(getApplicationContext(), (R.string.succes_message), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 }

@@ -121,7 +121,6 @@ public class StudetProvider extends ContentProvider{
 
         SQLiteDatabase database = dbWar.getWritableDatabase();
 
-
         String name = contentValues.getAsString(Contract.UniversityEntry.COLUMN_NAME);
         String lastName = contentValues.getAsString(Contract.UniversityEntry.COLUMN_LASTNAME);
         String nickName = contentValues.getAsString(Contract.UniversityEntry.COLUMN_NICKNAME);
@@ -214,7 +213,7 @@ public class StudetProvider extends ContentProvider{
 
             String name = values.getAsString(Contract.UniversityEntry.COLUMN_NAME);
             if (name == null) {
-                throw new IllegalArgumentException("Stuednt requires a name");
+                throw new IllegalArgumentException("Student requires a name");
             }
 
         }
@@ -224,7 +223,7 @@ public class StudetProvider extends ContentProvider{
             String lastName = values.getAsString(Contract.UniversityEntry.COLUMN_NICKNAME);
 
             if(lastName==null){
-                throw new IllegalArgumentException("Stuednt requires a Nickname");
+                throw new IllegalArgumentException("Student requires a Nickname");
             }
 
         }

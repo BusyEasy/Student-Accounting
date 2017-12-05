@@ -2,17 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:title="Delete"
-        android:id="@+id/delete"
-        android:orderInCategory="1"
-        app:showAsAction="never"
-        />
+
     <item
         android:title="Add people"
         android:id="@+id/add"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         app:showAsAction="never"
+        />
+
+    <item
+        android:title="Delete All Students"
+        android:id="@+id/deleteAllStudent"
+        app:showAsAction="never"
+        android:orderInCategory="2"
         />
 
 </menu>

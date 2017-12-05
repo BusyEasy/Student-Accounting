@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:textColor="@color/colorName"
-        android:paddingTop="3dp"
+        android:paddingTop="2dp"
         android:text="TextView" />
 
     <TextView
@@ -36,14 +36,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:textColor="@color/colorName"
-        android:paddingTop="3dp"
+        android:paddingTop="4dp"
         android:text="TextView" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="200dp"
-        android:layout_marginTop="-45dp"
+        android:layout_marginTop="-50dp"
         >
         <TextView
             android:id="@+id/UniversityAdapter"
